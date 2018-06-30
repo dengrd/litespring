@@ -8,6 +8,7 @@ import org.litespring.beans.BeanDefinition;
 public class GenericBeanDefinition implements BeanDefinition {
     private String id;
     private String className;
+    private String scope = SCOPE_DEFAULT;
 
     public GenericBeanDefinition(String id, String className) {
         this.id = id;
@@ -17,5 +18,25 @@ public class GenericBeanDefinition implements BeanDefinition {
     @Override
     public String getBeanClassName() {
         return this.className;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return SCOPE_SINGLETON.equals(this.scope) || SCOPE_DEFAULT.equals(this.scope);
+    }
+
+    @Override
+    public boolean isPrototype() {
+        return SCOPE_PROTOTYPE.equals(this.scope);
+    }
+
+    @Override
+    public String getScope() {
+        return this.scope;
+    }
+
+    @Override
+    public void setScope(String scope) {
+        this.scope = scope;
     }
 }

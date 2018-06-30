@@ -2,7 +2,6 @@ package org.litespring.beans.factory.support;
 
 import org.litespring.beans.BeanDefinition;
 import org.litespring.beans.factory.BeanCreationException;
-import org.litespring.beans.factory.BeanFactory;
 import org.litespring.beans.factory.config.ConfigurableBeanFactory;
 import org.litespring.utils.ClassUtils;
 import java.util.Map;
@@ -11,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by dengrd on 2018/6/18.
  */
-public class DefaultBeanFactory implements ConfigurableBeanFactory,BeanDefinitionRegistry{
+public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements ConfigurableBeanFactory,BeanDefinitionRegistry{
 
     private final Map<String,BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
     private ClassLoader beanClassLoader;
@@ -37,7 +36,20 @@ public class DefaultBeanFactory implements ConfigurableBeanFactory,BeanDefinitio
             throw new BeanCreationException("Bean Definition does not exist");
         }
 
-        ClassLoader classLoader = ClassUtils.getDefaultClassLoader();
+        if (beanDefinition.isSingleton()){
+            Object singletonBean = getSingleton(beanId);
+            if (singletonBean == null){
+                singletonBean = createBean(beanDefinition);
+                registrySingleton(beanId,singletonBean);
+            }
+            return singletonBean;
+        }
+
+        return createBean(beanDefinition);
+    }
+
+    private Object createBean(BeanDefinition beanDefinition) {
+        ClassLoader classLoader = this.getBeanClassLoader();
         String beanClassName = beanDefinition.getBeanClassName();
         try {
             Class<?> clazz = classLoader.loadClass(beanClassName);

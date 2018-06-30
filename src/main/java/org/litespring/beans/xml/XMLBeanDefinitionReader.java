@@ -1,7 +1,6 @@
 package org.litespring.beans.xml;
 
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.litespring.beans.BeanDefinition;
@@ -9,7 +8,6 @@ import org.litespring.beans.factory.BeanDefinitionStoreException;
 import org.litespring.beans.factory.support.BeanDefinitionRegistry;
 import org.litespring.beans.factory.support.GenericBeanDefinition;
 import org.litespring.core.io.Resource;
-import org.litespring.utils.ClassUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +21,7 @@ public class XMLBeanDefinitionReader {
 
     public static final String ID_ATTRIBUTE = "id";
     public static final String CLASS_ATTRIBUTE = "class";
+    public static final String SCOPE_ATTRIBUTE = "scope";
 
     private BeanDefinitionRegistry beanDefinitionRegistry;
 
@@ -45,7 +44,11 @@ public class XMLBeanDefinitionReader {
                 Element beanElement = iterator.next();
                 String id = beanElement.attributeValue(ID_ATTRIBUTE);
                 String className = beanElement.attributeValue(CLASS_ATTRIBUTE);
+                String scope = beanElement.attributeValue(SCOPE_ATTRIBUTE);
                 BeanDefinition beanDefinition = new GenericBeanDefinition(id,className);
+                if (scope != null){
+                    beanDefinition.setScope(scope);
+                }
                 beanDefinitionRegistry.registerBeanDefinition(id,beanDefinition);
             }
         } catch (Exception e) {
