@@ -1,5 +1,7 @@
 package org.litespring.beans;
 
+import org.litespring.beans.factory.config.RuntimeBeanReference;
+
 /**
  * Created by dengrd on 2018/6/30.
  */
